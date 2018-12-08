@@ -20,7 +20,7 @@ class EnemyCircle:
 
     def initPos(self, x, y):
         self.rect = self.rect.move(x, y)
-        self.game.screen.blit(self.image, self.rect)
+        self.game.sc.blit(self.image, self.rect)
         pygame.display.flip()
 
     def move(self):

@@ -44,13 +44,17 @@ class Player:
 
     def move(self, d, simulation):
 
+        # Stopping at borders
+        if d is "right" and self.x > 600: return
+        if d is "left" and self.x < 0: return
+        if d is "up" and self.y < 0: return
+        if d is "down" and self.y > 600: return
+
+
         self.rect = self.rect.move(self.move_dir[d])
 
-        if self.x + self.move_dir[d][0] <= self.screen.width:
-            self.x += self.move_dir[d][0]
-
-        if self.y + self.move_dir[d][1] <= self.screen.height:
-            self.y += self.move_dir[d][1]
+        self.x += self.move_dir[d][0]
+        self.y += self.move_dir[d][1]
 
         if not simulation:
             self.game.sc.fill(Player.white)

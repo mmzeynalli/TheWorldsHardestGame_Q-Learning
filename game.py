@@ -30,7 +30,7 @@ class Game:
         enemies = [None] * 4
 
         for i in range(len(enemies)):
-            enemies[i] = EnemyCircle(self.sc, "./img/enemy.jpg", 300, i * 200, 2, True)
+            enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 300, i * 200, 2, True)
 
         while self.gameContinues:
 
@@ -40,7 +40,7 @@ class Game:
             for e in enemies:
                 e.move()
 
-            p1.screen.blit(p1.image, p1.rect)
+            p1.game.sc.blit(p1.image, p1.rect)
 
             pygame.display.flip()
 
