@@ -38,14 +38,14 @@ class Game:
         self.map = Map(self, 1)
         print(self.enemy_mov)
 
-        self.pl = Player(self, "./img/player.jpg",  0,0 , 30)
+        self.pl = Player(self, "./img/player.jpg", 200, 200 , 3)
         self.enemies = [None] * 9
           
         for i in range(len(self.enemies)):
-            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (100 if i % 2 == 0 else 535), 1, self.enemy_mov)
+            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (self.enemy_border[0] if i % 2 == 0 else self.enemy_border[1] - 15), 2, self.enemy_mov)
             
         while self.gameContinues:
-
+            
             self.sc.fill(Player.white)
             self.pl.checkInput()
 

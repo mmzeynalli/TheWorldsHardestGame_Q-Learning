@@ -5,6 +5,7 @@ class Map:
         self.level = level
         self.game = game
 
+        self.coor = []
         self.lines = []
         self.readFile(level)
 
@@ -28,14 +29,14 @@ class Map:
     def parseInput(self, f):
         for line in f:
             temp = line.split(' ')
-            self.lines.append((tuple(map(int, temp[0].split(","))), tuple(map(int, temp[1].split(",")))))
+            self.coor.append((tuple(map(int, temp[0].split(","))), tuple(map(int, temp[1].split(",")))))
 
-        for l in self.lines:
+        for l in self.coor:
             print(l)
 
 
     def drawMap(self):
-        for l in self.lines:
-            pygame.draw.line(self.game.sc, self.game.black, l[0], l[1], 3)
+        for c in self.coor:
+            self.lines.append(pygame.draw.line(self.game.sc, self.game.black, c[0], c[1], 3))
 
     

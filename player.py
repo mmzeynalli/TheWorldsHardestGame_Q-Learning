@@ -18,8 +18,10 @@ class Player:
         self.rect = self.image.get_rect()
         self.setPos(x, y)
 
-        self.move_dir = {"right": [self.speed, 0], "left": [-self.speed, 0],
-                        "up": [0, -self.speed], "down": [0, self.speed]}
+        self.move_dir = {"right": (self.speed, 0), "left": (-self.speed, 0),
+                        "up": (0, -self.speed), "down": (0, self.speed)}
+
+        self.opposite_dir = {"right": "left", "left": "right", "up": "down", "down": "up"}
 
         #for Q-Learning
         self.parent = None
@@ -45,17 +47,14 @@ class Player:
 
     def move(self, d, simulation):
 
-        # Stopping at borders
-        if d is "right" and self.x > 600: return
-        if d is "left" and self.x < 0: return
-        if d is "up" and self.y < 0: return
-        if d is "down" and self.y > 600: return
-
+        self.x += self.move_dir[d][0]
+        self.y += self.move_dir[d][1]
 
         self.rect = self.rect.move(self.move_dir[d])
 
-        self.x += self.move_dir[d][0]
-        self.y += self.move_dir[d][1]
+        for line in self.game.map.lines:
+            if self.rect.colliderect(line):
+                self.rect = self.rect.move(self.move_dir[self.opposite_dir[d]])
 
         if not simulation:
             self.game.sc.fill(Player.white)
