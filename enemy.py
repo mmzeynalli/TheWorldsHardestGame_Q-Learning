@@ -1,5 +1,4 @@
 import pygame
-from player import Player
 
 class EnemyCircle:
 
@@ -24,6 +23,9 @@ class EnemyCircle:
         pygame.display.flip()
 
     def move(self):
+
+        if self.game.pl.rect.colliderect(self.rect):
+            self.game.gameContinues = False
 
         if self.hor:
             self.rect = self.rect.move(self.speed, 0)

@@ -31,6 +31,6 @@ class Map:
 
     def drawMap(self):
         for l in self.lines:
-            pygame.draw.line(self.game.sc, self.game.black, l[0], l[1], 10)
+            pygame.draw.line(self.game.sc, self.game.black, l[0], l[1], 3)
 
     

@@ -12,6 +12,8 @@ class Player:
         self.imName = image
         self.game = game
 
+        self.map = game.map
+
         self.image = pygame.image.load(image)
         self.rect = self.image.get_rect()
         self.setPos(x, y)
@@ -32,7 +34,6 @@ class Player:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_RIGHT:
                     self.move("right", False)
                 elif event.key == pygame.K_LEFT:
