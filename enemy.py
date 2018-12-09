@@ -14,6 +14,9 @@ class EnemyCircle:
         self.imName = image
 
         self.image = pygame.image.load(image)
+        self.w = self.image.get_width()
+        self.h = self.image.get_height()
+
         self.rect = self.image.get_rect()
         self.initPos(self.x, self.y)
 
@@ -35,8 +38,10 @@ class EnemyCircle:
             self.y += self.speed
 
         self.game.sc.blit(self.image, self.rect)
-
-        if self.x >= 600 or self.x <= 0:
+        
+        if self.hor and self.x >= self.game.enemy_border[1] or self.x < self.game.enemy_border[0] - self.w:
+            self.speed *= -1
+        elif (not self.hor) and self.y > self.game.enemy_border[1] - self.h or self.y <= self.game.enemy_border[0]:
             self.speed *= -1
 
 

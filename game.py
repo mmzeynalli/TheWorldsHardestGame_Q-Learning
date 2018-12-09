@@ -19,8 +19,11 @@ class Game:
 
         self.pl = None
         self.map = None
+
+        #attributes for enemies
         self.enemies = [None]
-        self.enemies_rect = [None]
+        self.enemy_mov = False
+        self.enemy_border = []
 
         self.createScreen(w, h)
 
@@ -33,25 +36,27 @@ class Game:
     def start(self):
         
         self.map = Map(self, 1)
+        print(self.enemy_mov)
 
-        self.pl = Player(self, "./img/player.jpg",  self.width / 2, self.height / 2, 30)
-        self.enemies = [None] * 4
+        self.pl = Player(self, "./img/player.jpg",  0,0 , 30)
+        self.enemies = [None] * 9
           
         for i in range(len(self.enemies)):
-            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 300, i * 200, 2, True)
-            self.enemies_rect.append(self.enemies[i].rect)
-
+            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (100 if i % 2 == 0 else 535), 1, self.enemy_mov)
+            
         while self.gameContinues:
 
             self.sc.fill(Player.white)
             self.pl.checkInput()
 
-            for e in self.enemies:
-                e.move()
+            self.updateMap()
 
-            self.map.drawMap()
+    def updateMap(self):
+        for e in self.enemies:
+            e.move()
 
-            self.pl.game.sc.blit(self.pl.image, self.pl.rect)
+        self.map.drawMap()
+        self.pl.game.sc.blit(self.pl.image, self.pl.rect)
 
-            pygame.display.flip()
+        pygame.display.flip()
 
