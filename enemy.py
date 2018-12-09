@@ -7,7 +7,7 @@ class EnemyCircle:
         self.x = x
         self.y = y
 
-        self.hor = hor
+        self.hor = hor #bool for moving horizontally or not (vertically)
 
         self.game = game
         self.speed = speed

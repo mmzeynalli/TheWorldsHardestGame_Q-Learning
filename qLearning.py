@@ -2,11 +2,20 @@ from player import Player
 
 dirs = ["right", "left", "up", "down"]
 
+class Tables:
+    def __init__(self, w, h):
+        #featural Q-Learning
+        self.w = []
+        self.f = []
+
+        self.q_value = [[0 for i in range(w)] for j in range(h)]
+
+    def updateTables(self, prevTable):
+        print("update")
 
 class QLearning:
-    def __init__(self, player, game, map):
-        self.pl = player
-        self.map = map
+    def __init__(self, game):
+        self.pl = game.pl
         self.game = game
 
     def calcNextMove(self):
@@ -28,26 +37,3 @@ class QLearning:
         for player in p:
             QL = QLearning(player, self.game, self.map)
             QL.calcNextMove()
-
-
-class Tables:
-    def __init__(self):
-        self.reward = []
-        self.t = []
-        self.qamma = 0.5
-
-        #featural Q-Learning
-        self.w = []
-        self.f = []
-
-        self.q_value = []
-
-
-'''
-    def updateTables(self, prevTable):
-        for i in range(len(self.w)):
-            self.q_value[x][y][action] += self.w[i] * self.f[i]
-
-        for i in range(len(self.t)):
-            self.q_value[x][y][action] += self.t * (self.reward + self.qamma * prevTable.q_value)
-'''
