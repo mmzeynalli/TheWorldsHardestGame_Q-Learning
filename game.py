@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 from player import Player
 from enemy import EnemyCircle
@@ -16,26 +17,38 @@ class Game:
         self.width = w
         self.height = h
 
+        self.sc = None
+        self.createScreen(w, h)
+
         #game info
         self.gameContinues = True
         self.isWin = False
         self.level = 1
-        self.sc = 0
 
         #Player attributes
         self.pl = None
         self.start_x = 0
         self.start_y = 0
 
-        #map of the game
-        self.map = None
-
         #attributes for enemies
-        self.enemies = [None]
+        self.enemies = [None] * 9
         self.enemy_mov = False
         self.enemy_border = []
 
-        self.createScreen(w, h)
+        #map of the game
+        self.map = Map(self, 1)
+
+        #attributes for Q-Learning with incremental learning
+        self.learn = QLearning(self)
+
+        self.iter_num = 0
+        self.player_max_moves = 5
+
+        self.myfont = pygame.font.SysFont("monospace", 24)
+
+        # render text
+        self.lbl_iter_num = None
+        self.lbl_max_moves = None
 
     def createScreen(self, w, h):
         pygame.init()
@@ -50,39 +63,63 @@ class Game:
 
         while self.gameContinues:
             
-            self.sc.fill(Player.white)
-            self.pl.check_input()
+            self.sc.fill(Game.white)
+            self.check_input()
+
+            self.learn.find_move()
+
             self.pl.get_keys()
 
             self.updateMap()
 
         self.endGame()
 
+    def check_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
     def updateMap(self):
         for e in self.enemies:
             e.move()
 
         self.map.drawMap()
-        self.pl.game.sc.blit(self.pl.image, self.pl.rect)
+        self.sc.blit(self.pl.image, self.pl.rect)
+
+        self.lbl_iter_num = self.myfont.render("Iter number: " + str(self.iter_num), 1, Game.black)
+        self.lbl_max_moves = self.myfont.render("Max moves: " + str(self.player_max_moves), 1, Game.black)
+
+        self.sc.blit(self.lbl_iter_num, (20, 100))
+        self.sc.blit(self.lbl_max_moves, (20, 130))
 
         pygame.display.flip()
 
     def createEnv(self):
 
-        self.sc.fill(Player.white)
+        self.sc.fill(Game.white)
 
-        self.map = Map(self, 1)
         self.pl = Player(self, "./img/player.jpg", self.start_x, self.start_y , 2)
-        self.enemies = [None] * 9
+        
           
         for i in range(len(self.enemies)):
-            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (self.enemy_border[0] if i % 2 == 0 else self.enemy_border[1] - 15), 1, self.enemy_mov)
+            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (self.enemy_border[0] if i % 2 == 0 else self.enemy_border[1] - 15), 2, self.enemy_mov)
             
 
     def endGame(self):
         if self.isWin:
             print("Hooorraaaay")
-        else: #restart the game
+            print("Win after %d iterations" %self.iter_num)
+        else:
+            #update Q-Learning variabless
+            self.iter_num += 1
+
+            if self.iter_num % 5 == 0:
+                self.player_max_moves += 5
+
+            if self.iter_num % 15 == 0:
+                self.learn.eps /= 2
+            
+            #restart the game
             self.createEnv()
             self.gameContinues = True
             self.start()
