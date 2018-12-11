@@ -1,5 +1,4 @@
 from game import Game
-from qLearning import QLearning
 
 w, h = 1000, 1000
 

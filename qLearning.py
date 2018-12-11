@@ -1,7 +1,8 @@
-from player import Player
 import random
+from collections import defaultdict
 
 dirs = ["right", "left", "up", "down", "stay"]
+
 
 class QLearning:
     def __init__(self, game):
@@ -14,14 +15,14 @@ class QLearning:
         self.w = {"enemies": -10, "finish": -10}
         self.f = {"enemies": 0, "finish": 0} #temp values
 
-        self.q_value = [[Q_Values() for i in range(self.game.width)] for j in range(self.game.height)]
+        self.q_value_table = self.mult_dim_dict(2, QValues, self.game)
 
-    #horizontal distance
     def dist_hor(self, obj1, obj2):
+        # horizontal distance
         return obj2.x - (obj1.x + obj1.w)
 
-    #vertical distance
     def dist_ver(self, obj1, obj2):
+        # vertical distance
         return obj2.y - obj1.y
 
     def find_move(self):
@@ -39,13 +40,22 @@ class QLearning:
     def move_optimally(self):
         x, y = self.game.pl.x, self.game.pl.y
 
-        self.q_value[int(x)][int(y)].update_values()
+        self.q_value_table[str(x)][str(y)].update_values()
 
-        self.game.pl.move(self.q_value[int(x)][int(y)].find_best_move())
+        self.game.pl.move(self.q_value_table[int(x)][int(y)].find_best_move())
+
+    def mult_dim_dict(self, dim, dict_type, params):
+        if dim == 1:
+            return defaultdict(lambda: dict_type(params))
+        else:
+            return defaultdict(lambda: self.mult_dim_dict(dim - 1, dict_type, params))
 
 
-class Q_Values:
-    def __init__(self):
+class QValues:
+    def __init__(self, game):
+
+        self.game = game
+
         self.right = 0
         self.left = 0
         self.up = 0
@@ -54,8 +64,8 @@ class Q_Values:
         self.t = 0
 
     def update_values(self):
-        print("updating values")
-
+        for d in dirs:
+            next_x, next_y = self.game.pl.move_simulation(d)
 
     def find_best_move(self):
         maxi = max(self.right, self.left, self.up, self.down, self.stay)

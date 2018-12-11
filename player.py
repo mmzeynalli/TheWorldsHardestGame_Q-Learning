@@ -11,7 +11,7 @@ class Player:
 
         #for smooth movement
         self.clock = pygame.time.Clock()
-        self.dt = self.clock.tick(60) / 1000.0
+        self.dt = self.clock.tick(60) / 1000.0 #for simulation
 
         self.speed = speed
         self.imName = image
@@ -51,10 +51,11 @@ class Player:
             return
 
         #move player and update coordinates
-        self.x += self.dt * self.move_dir[d][0]
-        self.y += self.dt * self.move_dir[d][1]
+
 
         self.rect = self.rect.move(self.move_dir[d])
+        self.x = self.rect.left
+        self.y = self.rect.top
 
         self.mov_num += 1
 
@@ -67,3 +68,6 @@ class Player:
         for line in self.game.map.lines:
             if self.rect.colliderect(line):
                 self.rect = self.rect.move(self.move_dir[self.opposite_dir[d]])
+
+    def move_simulation(self, d):
+        return self.x + self.dt * self.move_dir[d][0], self.y + self.dt * self.move_dir[d][1]
