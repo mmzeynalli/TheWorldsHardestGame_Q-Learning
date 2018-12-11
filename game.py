@@ -42,7 +42,7 @@ class Game:
         self.learn = QLearning(self)
 
         self.iter_num = 0
-        self.player_max_moves = 5
+        self.player_max_moves = 60
 
         self.myfont = pygame.font.SysFont("monospace", 24)
 
@@ -68,7 +68,9 @@ class Game:
 
             self.learn.find_move()
 
-            self.pl.get_keys()
+            #self.pl.get_keys()
+
+            print(self.pl.speed, self.enemies[0].speed)
 
             self.updateMap()
 
@@ -116,7 +118,7 @@ class Game:
             if self.iter_num % 5 == 0:
                 self.player_max_moves += 5
 
-            if self.iter_num % 15 == 0:
+            if self.iter_num % 30 == 0:
                 self.learn.eps /= 2
             
             #restart the game

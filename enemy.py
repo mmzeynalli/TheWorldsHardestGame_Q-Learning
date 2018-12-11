@@ -29,6 +29,7 @@ class EnemyCircle:
 
         if self.game.pl.rect.colliderect(self.rect):
             self.game.gameContinues = False
+            self.game.learn.q_value_table[str(self.game.pl.x)][str(self.game.pl.y)].update_after_death()
 
         if self.hor:
             self.rect = self.rect.move(self.speed, 0)

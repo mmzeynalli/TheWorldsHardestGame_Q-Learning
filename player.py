@@ -51,8 +51,6 @@ class Player:
             return
 
         #move player and update coordinates
-
-
         self.rect = self.rect.move(self.move_dir[d])
         self.x = self.rect.left
         self.y = self.rect.top
@@ -71,3 +69,6 @@ class Player:
 
     def move_simulation(self, d):
         return self.x + self.dt * self.move_dir[d][0], self.y + self.dt * self.move_dir[d][1]
+
+    def mov_back_simulation(self, d):
+        return self.move_simulation(self.opposite_dir(d))
