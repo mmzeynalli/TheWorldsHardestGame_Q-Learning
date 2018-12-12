@@ -28,7 +28,10 @@ class QLearning:
 
     def dist_ver(self, obj1, obj2):
         # vertical distance
-        return abs(obj2.y - obj1.y)
+        if abs(obj2.x - obj1.x > 20):
+            return 500
+        else:
+            return abs(obj2.y - obj1.y)
 
     def find_move(self):
         r = random.random()
@@ -39,7 +42,7 @@ class QLearning:
             self.move_optimally()
 
         x, y = self.game.pl.x, self.game.pl.y
-        self.q_value_table[str(x)][str(y)].update_value()
+        self.q_value_table[x][y].update_value()
 
     def move_randomly(self):
         i = random.randint(0, len(dirs) - 1)
@@ -48,7 +51,7 @@ class QLearning:
     def move_optimally(self):
         x, y = self.game.pl.x, self.game.pl.y
 
-        self.game.pl.move(self.q_value_table[str(x)][str(y)].find_best_move())
+        self.game.pl.move(self.q_value_table[x][y].find_best_move())
 
 
 class QValues:
@@ -62,6 +65,10 @@ class QValues:
         self.t = [] #time
 
     def update_value(self):
+
+        if self.pl.mov_num in self.t:
+            return
+
         dist_finish = self.QL.dist_hor(self.QL.game.map.finish, self.pl)
         dist_enemy = self.QL.dist_ver(self.QL.game.enemies[0], self.pl)
 
@@ -70,24 +77,28 @@ class QValues:
 
     def update_after_death(self):
         if not self.pl.mov_num in self.t:
-            self.t.append(self.pl.mov)
-            self.val.append(-2000)
+            self.t.append(self.pl.mov_num)
+            self.val.append(-3000)
 
     def get_val_at_t(self, mov):
         if mov in self.t:
-            return self.q[self.t.index(mov)]
+            return self.val[self.t.index(mov)]
         else:
             return 0
 
     def find_best_move(self):
 
-        l = [0]
+        li = [0]
 
         for d in dirs:
             x, y = self.pl.move_simulation(d)
-            l.append(self.table[str(x)][str(y)].get_val_at_t(self.pl.mov_num + 1))
+            li.append(self.table[x][y].get_val_at_t(self.pl.mov_num + 1))
 
-        maxi = max(l)
+        print("right: %d, left: %d, up: %d, down: %d, stay %d" %(li[0], li[1], li[2], li[3], li[4]))
 
-        for i in range(len(l)):
-            if l[i] == maxi: return dirs[i]
+        maxi = max(li)
+
+        for i in range(len(li)):
+            if li[i] == maxi:
+                print("action chosen: ", dirs[i])
+                return dirs[i]

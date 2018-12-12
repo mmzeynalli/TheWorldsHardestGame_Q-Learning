@@ -42,7 +42,7 @@ class Game:
         self.learn = QLearning(self)
 
         self.iter_num = 0
-        self.player_max_moves = 60
+        self.player_max_moves = 100
 
         self.myfont = pygame.font.SysFont("monospace", 24)
 
@@ -57,20 +57,19 @@ class Game:
         pygame.display.flip()
 
     def start(self):
-        
+
         #draw player, enemies and map
         self.createEnv()
 
         while self.gameContinues:
-            
+
             self.sc.fill(Game.white)
             self.check_input()
 
             self.learn.find_move()
 
             #self.pl.get_keys()
-
-            print(self.pl.speed, self.enemies[0].speed)
+            #print(self.pl.speed, self.enemies[0].speed)
 
             self.updateMap()
 
@@ -100,14 +99,13 @@ class Game:
 
         self.sc.fill(Game.white)
 
-        self.pl = Player(self, "./img/player.jpg", self.start_x, self.start_y , 2)
-        
-          
+        self.pl = Player(self, "./img/player.jpg", self.start_x, self.start_y , 1)
+
         for i in range(len(self.enemies)):
             self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (self.enemy_border[0] if i % 2 == 0 else self.enemy_border[1] - 15), 2, self.enemy_mov)
-            
 
     def endGame(self):
+
         if self.isWin:
             print("Hooorraaaay")
             print("Win after %d iterations" %self.iter_num)
@@ -118,11 +116,13 @@ class Game:
             if self.iter_num % 5 == 0:
                 self.player_max_moves += 5
 
-            if self.iter_num % 30 == 0:
+            if self.iter_num % 50 == 0:
                 self.learn.eps /= 2
-            
+
             #restart the game
-            self.createEnv()
+            self.pl = None
+            self.enemies = [None] * 9
+
             self.gameContinues = True
             self.start()
 

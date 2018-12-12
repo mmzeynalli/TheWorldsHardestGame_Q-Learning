@@ -1,5 +1,6 @@
 import pygame
 
+
 class Player:
 
     def __init__(self, game, image, x, y, speed):
@@ -10,8 +11,8 @@ class Player:
         self.mov_num = 0
 
         #for smooth movement
-        self.clock = pygame.time.Clock()
-        self.dt = self.clock.tick(60) / 1000.0 #for simulation
+        #self.clock = pygame.time.Clock()
+        #self.dt = 1 #self.clock.tick(60) / 1000.0 #for simulation
 
         self.speed = speed
         self.imName = image
@@ -68,7 +69,7 @@ class Player:
                 self.rect = self.rect.move(self.move_dir[self.opposite_dir[d]])
 
     def move_simulation(self, d):
-        return self.x + self.dt * self.move_dir[d][0], self.y + self.dt * self.move_dir[d][1]
+        return self.x + self.move_dir[d][0], self.y + self.move_dir[d][1]
 
     def mov_back_simulation(self, d):
         return self.move_simulation(self.opposite_dir(d))
