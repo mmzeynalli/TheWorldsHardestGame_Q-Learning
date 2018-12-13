@@ -56,10 +56,17 @@ class Game:
         self.sc.fill(Game.white)
         pygame.display.flip()
 
+    #main game functions
     def start(self):
 
         #draw player, enemies and map
         self.createEnv()
+        self.game_loop()
+
+    def game_loop(self):
+
+        self.init_positions()
+        self.pl.mov_num = 0
 
         while self.gameContinues:
 
@@ -74,6 +81,23 @@ class Game:
             self.updateMap()
 
         self.endGame()
+
+    #functions used while game
+    def createEnv(self):
+
+        self.sc.fill(Game.white)
+
+        self.pl = Player(self, "./img/player.jpg", 1)
+
+        for i in range(len(self.enemies)):
+            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 2, self.enemy_mov)
+
+    def init_positions(self):
+
+        self.pl.set_pos(self.start_x, self.start_y)
+
+        for i in range(len(self.enemies)):
+            self.enemies[i].set_pos(260 + 50 * i, (self.enemy_border[0] + 1 if i % 2 == 0 else self.enemy_border[1] - 15))
 
     def check_input(self):
         for event in pygame.event.get():
@@ -93,16 +117,7 @@ class Game:
         self.sc.blit(self.lbl_iter_num, (20, 100))
         self.sc.blit(self.lbl_max_moves, (20, 130))
 
-        pygame.display.flip()
-
-    def createEnv(self):
-
-        self.sc.fill(Game.white)
-
-        self.pl = Player(self, "./img/player.jpg", self.start_x, self.start_y , 1)
-
-        for i in range(len(self.enemies)):
-            self.enemies[i] = EnemyCircle(self, "./img/enemy.jpg", 260 + 50 * i, (self.enemy_border[0] if i % 2 == 0 else self.enemy_border[1] - 15), 2, self.enemy_mov)
+        pygame.display.update()
 
     def endGame(self):
 
@@ -120,10 +135,8 @@ class Game:
                 self.learn.eps /= 2
 
             #restart the game
-            self.pl = None
-            self.enemies = [None] * 9
 
             self.gameContinues = True
-            self.start()
+            self.game_loop()
 
 

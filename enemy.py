@@ -2,10 +2,9 @@ import pygame
 
 class EnemyCircle:
 
-    def __init__(self, game, image, x, y, speed, hor):
+    def __init__(self, game, image, speed, hor):
 
-        self.x = x
-        self.y = y
+        self.x, self.y = 0, 0
 
         self.hor = hor #bool for moving horizontally or not (vertically)
 
@@ -18,25 +17,28 @@ class EnemyCircle:
         self.h = self.image.get_height()
 
         self.rect = self.image.get_rect()
-        self.initPos(self.x, self.y)
 
-    def initPos(self, x, y):
+    def set_pos(self, x, y):
+        self.rect = self.rect.move(-self.rect.left, -self.rect.top)
         self.rect = self.rect.move(x, y)
+
+        self.x = self.rect.left
+        self.y = self.rect.top
+
         self.game.sc.blit(self.image, self.rect)
-        pygame.display.flip()
 
     def move(self):
 
         if self.game.pl.rect.colliderect(self.rect):
             self.game.gameContinues = False
-            self.game.learn.q_value_table[str(self.game.pl.x)][str(self.game.pl.y)].update_after_death()
+            self.game.learn.q_value_table[self.game.pl.x][self.game.pl.y].update_after_death()
 
         if self.hor:
             self.rect = self.rect.move(self.speed, 0)
-            self.x += self.speed
+            self.x = self.rect.left
         else:
             self.rect = self.rect.move(0, self.speed)
-            self.y += self.speed
+            self.y = self.rect.top
 
         self.game.sc.blit(self.image, self.rect)
         

@@ -12,7 +12,7 @@ class QLearning:
         self.eps = 0.64
 
         #featural Q-Learning
-        self.w = [1, -2] #enemies, finish
+        self.w = [1, -10] #enemies, finish
 
         self.q_value_table = self.mult_dim_dict(2, QValues, self)
 
@@ -64,10 +64,14 @@ class QValues:
         self.val = []
         self.t = [] #time
 
+        self.sing_val = 0
+
     def update_value(self):
 
         if self.pl.mov_num in self.t:
             return
+
+        #if self.sing_val != 0: return
 
         dist_finish = self.QL.dist_hor(self.QL.game.map.finish, self.pl)
         dist_enemy = self.QL.dist_ver(self.QL.game.enemies[0], self.pl)
@@ -75,10 +79,14 @@ class QValues:
         self.t.append(self.pl.mov_num)
         self.val.append(dist_enemy * self.QL.w[0] + dist_finish * self.QL.w[1])
 
+        self.sing_val = dist_enemy * self.QL.w[0] + dist_finish * self.QL.w[1]
+
     def update_after_death(self):
         if not self.pl.mov_num in self.t:
             self.t.append(self.pl.mov_num)
             self.val.append(-3000)
+
+            #self.sing_val = -3000
 
     def get_val_at_t(self, mov):
         if mov in self.t:
@@ -88,11 +96,12 @@ class QValues:
 
     def find_best_move(self):
 
-        li = [0]
+        li = []
 
         for d in dirs:
             x, y = self.pl.move_simulation(d)
             li.append(self.table[x][y].get_val_at_t(self.pl.mov_num + 1))
+            #li.append(self.table[x][y].sing_val)
 
         print("right: %d, left: %d, up: %d, down: %d, stay %d" %(li[0], li[1], li[2], li[3], li[4]))
 
@@ -100,5 +109,5 @@ class QValues:
 
         for i in range(len(li)):
             if li[i] == maxi:
-                print("action chosen: ", dirs[i])
+                #print("action chosen: ", dirs[i])
                 return dirs[i]

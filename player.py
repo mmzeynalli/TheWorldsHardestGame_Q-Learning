@@ -3,9 +3,9 @@ import pygame
 
 class Player:
 
-    def __init__(self, game, image, x, y, speed):
+    def __init__(self, game, image, speed):
 
-        self.x, self.y = x, y
+        self.x, self.y = 0, 0
 
         #to calculate number of moves
         self.mov_num = 0
@@ -18,9 +18,8 @@ class Player:
         self.imName = image
         self.game = game
 
-        self.image = pygame.image.load(image)
+        self.image = pygame.image.load(image).convert()
         self.rect = self.image.get_rect()
-        self.setPos(x, y)
 
         self.move_dir = {"right": (self.speed, 0), "left": (-self.speed, 0),
                         "up": (0, -self.speed), "down": (0, self.speed), "stay": (0, 0)}
@@ -28,8 +27,13 @@ class Player:
         #for returning
         self.opposite_dir = {"right": "left", "left": "right", "up": "down", "down": "up"}
 
-    def setPos(self, x, y):
-        self.rect = self.rect.move(x, y)
+    def set_pos(self, x, y):
+        self.rect = self.rect.move(-self.rect.left, -self.rect.top) #return to 0, 0
+        self.rect = self.rect.move(x, y) #come to needed coors
+
+        self.x = self.rect.left
+        self.y = self.rect.top
+
         self.game.sc.blit(self.image, self.rect)
 
     def get_keys(self):
